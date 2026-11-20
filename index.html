@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -19,11 +20,14 @@ body{
 }
 header{text-align:center;padding:25px;background:linear-gradient(135deg,#32cddd,#c4ffff);border-bottom:3px solid white}
 h1{font-size:32px;text-shadow:2px 3px white}
+header button{margin-top:8px}
 main{max-width:850px;margin:auto;padding:16px}
 .panel{background:#ffffffb9;border:2px solid white;border-radius:22px;padding:16px;margin:15px 0;box-shadow:0 5px 20px #299ab533}
 button{border:2px solid white;border-radius:18px;padding:10px 14px;background:linear-gradient(135deg,#bfffff,#54d5df);color:#155c70;font-weight:bold;cursor:pointer}
 button:disabled{opacity:.4}
 input,textarea{width:100%;padding:13px;margin:6px 0;border:2px solid white;border-radius:13px;background:#f1ffff;font:inherit;color:#155c70}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.setting-row input{width:auto;margin:0}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .card{background:linear-gradient(145deg,#fff,#c8f8f5);padding:12px;border:2px solid white;border-radius:20px}
 .art{height:100px;display:grid;place-items:center;font-size:55px;background:#d7ffff;border-radius:15px}
@@ -36,6 +40,16 @@ input,textarea{width:100%;padding:13px;margin:6px 0;border:2px solid white;borde
 @keyframes pop{from{transform:scale(.3)}to{transform:scale(1)}}
 @keyframes bounce{to{transform:translateY(-12px)}}
 footer{text-align:center;padding:25px}
+body.dark-theme{color:#e5f7fb;background:linear-gradient(140deg,#102b38,#15212e,#173b39)}
+body.dark-theme header{background:linear-gradient(135deg,#174957,#233c51);border-color:#315766}
+body.dark-theme .panel{background:#1b3444e8;border-color:#416274;box-shadow:0 5px 20px #0005}
+body.dark-theme .card{background:linear-gradient(145deg,#254759,#1d3844);border-color:#416274}
+body.dark-theme .art{background:#315565}
+body.dark-theme .small{color:#b4d2da}
+body.dark-theme .price{color:#78e6ed}
+body.dark-theme input,body.dark-theme textarea{background:#203d4b;border-color:#416274;color:#e5f7fb}
+body.dark-theme button{background:linear-gradient(135deg,#315565,#287783);border-color:#416274;color:#efffff}
+body.dark-theme #successBox{background:linear-gradient(145deg,#254759,#1b3444);border-color:#416274}
 @media(max-width:600px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -43,8 +57,19 @@ footer{text-align:center;padding:25px}
 <header>
 <h1>🫧 FOODIE AERO</h1>
 <p>Welcome to our Aqua Food World 🌊</p>
+<button id="settingsToggle" type="button" aria-controls="settingsPanel" aria-expanded="false" onclick="toggleSettings()">⚙️ Cài đặt</button>
 </header>
 <main>
+<section class="panel" id="settingsPanel" style="display:none">
+<div class="row">
+<h2>⚙️ Cài đặt</h2>
+<button type="button" onclick="toggleSettings()">Đóng</button>
+</div>
+<label class="setting-row" for="darkMode">
+<span>Giao diện tối</span>
+<input id="darkMode" type="checkbox">
+</label>
+</section>
 <section class="panel">
 <h2>📍 Giao hàng đến</h2>
 <input id="address" placeholder="Nhập địa chỉ giao hàng...">
@@ -143,6 +168,19 @@ function closeMenu(){
  document.getElementById("menuPanel").style.display="none";
 }
 
+function toggleSettings(){
+ const panel=document.getElementById("settingsPanel");
+ const isOpen=panel.style.display==="none";
+ panel.style.display=isOpen?"block":"none";
+ document.getElementById("settingsToggle").setAttribute("aria-expanded",isOpen);
+ if(isOpen)panel.scrollIntoView({behavior:"smooth"});
+}
+
+function setTheme(isDark){
+ document.body.classList.toggle("dark-theme",isDark);
+ localStorage.setItem("foodie-theme",isDark?"dark":"light");
+}
+
 function add(shop,food){
  const f=shops[shop].foods[food];
  const id=shop+"-"+food;
@@ -202,6 +240,11 @@ function finish(){
  render();
  window.scrollTo({top:0,behavior:"smooth"});
 }
+
+const darkMode=document.getElementById("darkMode");
+darkMode.checked=localStorage.getItem("foodie-theme")==="dark";
+document.body.classList.toggle("dark-theme",darkMode.checked);
+darkMode.addEventListener("change",()=>setTheme(darkMode.checked));
 
 showShops();
 render();
