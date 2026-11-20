@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://799crvyms7-pixel.github.io/Frugiterfood/sitemap.xml
